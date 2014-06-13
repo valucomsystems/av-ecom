@@ -37,4 +37,27 @@ CREATE TABLE `setcurr` (
   PRIMARY KEY (`SETCCURR`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='The table contains information about the different national ';
 
+CREATE TABLE `av_ecom`.`catenttype` (
+  `CATENTTYPE_ID` CHAR(16) NOT NULL COMMENT 'The identifier of this catalog entry type.',
+  `DESCRIPTION` VARCHAR(254) NULL COMMENT 'The description for this catalog entry type.',
+  `OPTCOUNTER` INT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  PRIMARY KEY (`CATENTTYPE_ID`))
+COMMENT = 'This table defines all possible types of catalog entries. Ex' /* comment truncated */ /*amples of catalog entry types are ProductBean, ItemBean, PackageBean, BundleBean and DynamicKitBean.*/;
+
+
+CREATE TABLE `catentrel` (
+  `CATENTRY_ID_PARENT` bigint(20) NOT NULL COMMENT 'The reference number of the source catalog entry in this relationship.',
+  `CATRELTYPE_ID` char(32) NOT NULL COMMENT 'The type of relationship:',
+  `SEQUENCE` bigint(20) NOT NULL DEFAULT '0' COMMENT 'The reference number of the target catalog entry in this relationship.',
+  `QUANTITY` double DEFAULT NULL COMMENT 'A quantity that can be associated with the relationship.',
+  `FIELD1` varchar(254) DEFAULT NULL COMMENT 'Customizable',
+  `FIELD2` int(11) DEFAULT NULL COMMENT 'Customizable',
+  `FIELD3` float(20,5) DEFAULT NULL COMMENT 'Customizable',
+  `OPTCOUNTER` int(11) DEFAULT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  `CATENTRY_ID_CHILD` bigint(20) NOT NULL COMMENT 'The reference number of the target catalog entry in this relationship.',
+  PRIMARY KEY (`CATENTRY_ID_PARENT`,`CATRELTYPE_ID`,`CATENTRY_ID_CHILD`),
+  KEY `CATENTRY_ID_CHILD+CATRELTYPE_ID` (`CATENTRY_ID_CHILD`,`CATRELTYPE_ID`),
+  KEY `CATENTRY_ID_PARENT` (`CATENTRY_ID_PARENT`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table holds containment relationships between catalog e';
+
 
