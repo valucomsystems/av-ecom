@@ -61,3 +61,48 @@ CREATE TABLE `catentrel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table holds containment relationships between catalog e';
 
 
+CREATE TABLE `catreltype` (
+  `CATRELTYPE_ID` char(32) NOT NULL COMMENT 'The identifier of this catalog entry relationship type:',
+  `DESCRIPTION` varchar(254) DEFAULT NULL COMMENT 'A description for this catalog entry relationship type.',
+  `FIELD1` int(11) DEFAULT NULL COMMENT 'Customizable',
+  `FIELD2` float(20,5) DEFAULT NULL COMMENT 'Customizable',
+  `FIELD3` varchar(254) DEFAULT NULL COMMENT 'Customizable',
+  `OPTCOUNTER` int(11) DEFAULT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  PRIMARY KEY (`CATRELTYPE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table describes the types of containment relationships ';
+
+
+CREATE TABLE `devicefmt` (
+  `DEVICETYPE_ID` CHAR(64) NOT NULL COMMENT 'Device type ID.',
+  `DEVICEFMT_ID` INT NOT NULL COMMENT 'Device format ID. The default device format is -1, which t represents an HTTP Web browser.',
+  `DISPLAYNAME` VARCHAR(254) NOT NULL COMMENT 'Display name for the device format.',
+  `OPTCOUNTER` INT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  PRIMARY KEY (`DEVICETYPE_ID`))ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table is for defining all the device format types.';
+  
+  
+  CREATE TABLE `av_ecom`.`catentdesc` (
+  `CATENTRY_ID` BIGINT NOT NULL,
+  `LANGUAGE_ID` INT NOT NULL,
+  `NAME` CHAR(128) NULL,
+  `SHORTDESCRIPTION` VARCHAR(254) NULL,
+  `LONGDESCRIPTION` LONGBLOB NULL,
+  `THUMBNAIL` VARCHAR(254) NULL,
+  `FULLIMAGE` VARCHAR(254) NULL COMMENT 'Indicates the length of time to availability of this catalog entry. Do not use this column to indicate inventory levels.',
+  `AUXDESCRIPTION1` VARCHAR(4000) NULL,
+  `AUXDESCRIPTION2` VARCHAR(4000) NULL,
+  `AVAILABLE` INT NOT NULL COMMENT 'Indicates the length of time to availability of this catalog entry. Do not use this column to indicate inventory levels.',
+  `XMLDETAIL` LONGBLOB NULL COMMENT 'Indicates the length of time to availability of this catalog entry. Do not use this column to indicate inventory levels.',
+  `PUBLISHED` INT NOT NULL COMMENT 'Indicates whether this catalog entry should be displayed for the language indicated by LANGUAGE_ID:0/Catalog entry should not be displayed-1/catalog entry should be displayed',
+  `AVAILABILITYDATE` TIMESTAMP NULL COMMENT 'Date this catalog entry becomes available.',
+  `KEYWORD` VARCHAR(254) NULL COMMENT 'A keyword used for searching.',
+  `OPTCOUNTER` INT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  `UP_NAME` CHAR(128) NULL COMMENT 'The equivalent value of the NAME column in upper case characters. This column is used only for DB2 (LUW) database-types to enhance performance of text-based searches issued from Management Center.',
+  PRIMARY KEY (`CATENTRY_ID`, `LANGUAGE_ID`),
+  INDEX `LANGUAGE_ID+CATENTRY_ID+NAME+PUBLISHED` (`LANGUAGE_ID` ASC, `CATENTRY_ID` ASC, `NAME` ASC, `PUBLISHED` ASC),
+  INDEX `NAME+LANGUAGE_ID+PUBLISHED` (`NAME` ASC, `LANGUAGE_ID` ASC, `PUBLISHED` ASC),
+  INDEX `CATENTRY_ID` (`CATENTRY_ID` ASC),
+  INDEX `UP_NAME` (`UP_NAME` ASC))
+COMMENT = 'This table holds language-dependent information related to a' /* comment truncated */ /* catalog entry.*/;
+
+
+
