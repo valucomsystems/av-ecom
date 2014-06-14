@@ -106,3 +106,119 @@ COMMENT = 'This table holds language-dependent information related to a' /* comm
 
 
 
+CREATE TABLE `av_ecom`.`dispentrel` (
+  `CATENTRY_ID` BIGINT NOT NULL COMMENT 'The reference number of the CatalogEntry for which this page name displays. A value of 0 indicates that this page name will be used for for all CatalogEntries.',
+  `DISPENTREL_ID` BIGINT NOT NULL COMMENT 'The reference number of this entry.',
+  `LANGUAGE_ID` INT NULL COMMENT 'The language in which this page displays. For a list of language components, see the LANGUAGE table.',
+  `DEVICEFMT_ID` INT NOT NULL COMMENT 'The reference number of the device type that the page will be displayed on. Foreign key to the DEVICEFMT table.',
+  `STOREENT_ID` INT NOT NULL COMMENT 'The reference number of the Store for which this page will be displayed.',
+  `PAGENAME` VARCHAR(254) NOT NULL COMMENT 'The name and path of the display template page. The path is relative to the application document root.',
+  `CATENTTYPE_ID` CHAR(16) NOT NULL DEFAULT 0 COMMENT 'The type of CatalogEntry that this page will be used to display. Foreign key to the CATENTTYPE table. For example, if this column is designated as \"BundleBean\", then this page will be used to display Bundles.',
+  `AUCTIONSTATE` INT NOT NULL DEFAULT 0 COMMENT 'The flag that indicates that this template page displays a CatalogEntry that is on auction. A value of 0 indicates that it is not an auction template, while a value of 1 indicates that it is.',
+  `MBRGRP_ID` BIGINT NOT NULL COMMENT 'The reference number of the MemberGroup for which this template page will be displayed. A value of 0 indicates that this template page will be used for for all MemberGroups.',
+  `DESCRIPTION` VARCHAR(45) NULL COMMENT 'A description of this display page.',
+  `FIELD1` VARCHAR(254) NULL COMMENT 'Customizable',
+  `RANK` DOUBLE NULL COMMENT 'A sequence number used to break ties when more than one page satisfies the selection criteria. The larger the rank, the lower the precedence of the page.',
+  `FIELD2` VARCHAR(254) NULL COMMENT 'Customizable',
+  `OPTCOUNTER` INT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  PRIMARY KEY (`DISPENTREL_ID`),
+  UNIQUE INDEX `I0000092` (`DISPENTREL_ID` ASC, `STOREENT_ID` ASC, `CATENTRY_ID` ASC, `CATENTTYPE_ID` ASC, `MBRGRP_ID` ASC, `AUCTIONSTATE` ASC, `RANK` ASC, `LANGUAGE_ID` ASC),
+  INDEX `I0000093` (`AUCTIONSTATE` ASC, `MBRGRP_ID` ASC, `CATENTRY_ID` ASC, `STOREENT_ID` ASC),
+  INDEX `I0000094` (`CATENTRY_ID` ASC, `CATENTTYPE_ID` ASC, `STOREENT_ID` ASC, `MBRGRP_ID` ASC),
+  INDEX `CATENTTYPE_ID` (`CATENTTYPE_ID` ASC),
+  INDEX `MBRGRP_ID` (`MBRGRP_ID` ASC),
+  INDEX `STOREENT_ID` (`STOREENT_ID` ASC))
+COMMENT = 'This table holds the page names used to display CatalogEntri' /* comment truncated */ /*es. The selection is based on Store, MemberGroup, DeviceType, CatalogEntryType, CatalogEntry, AuctionState, Language, or any combination of the above.*/;
+
+
+CREATE TABLE `catentattr` (
+  `CATENTATTR_ID` bigint(20) NOT NULL,
+  `LANGUAGE_ID` int(11) NOT NULL,
+  `CATENTRY_ID` bigint(20) NOT NULL,
+  `NAME` varchar(254) NOT NULL,
+  `VALUE` varchar(254) NOT NULL,
+  `DESCRIPTION` varchar(254) DEFAULT NULL,
+  `FIELD1` int(11) DEFAULT NULL,
+  `FIELD2` varchar(254) DEFAULT NULL,
+  `FIELD3` varchar(254) DEFAULT NULL,
+  `OPTCOUNTER` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`CATENTATTR_ID`),
+  UNIQUE KEY `CATENTRY_ID+LANGUAGE_ID+NAME` (`CATENTRY_ID`,`LANGUAGE_ID`,`NAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table is deprecated and is provided for backward compat';
+
+CREATE TABLE `catgroup` (
+  `CATGROUP_ID` bigint(20) NOT NULL,
+  `MEMBER_ID` bigint(20) NOT NULL,
+  `IDENTIFIER` varchar(254) DEFAULT NULL,
+  `MARKFORDELETE` int(11) NOT NULL,
+  `LASTUPDATE` timestamp NULL DEFAULT NULL,
+  `FIELD1` varchar(254) DEFAULT NULL,
+  `FIELD2` varchar(254) DEFAULT NULL,
+  `RANK` double DEFAULT NULL,
+  `OPTCOUNTER` int(11) DEFAULT NULL COMMENT 'The optimistic concurrency control counter for the table.',
+  `UP_IDENTIFIER` varchar(254) DEFAULT NULL COMMENT 'The equivalent value of the IDENTIFIER column in upper case characters. This column is used only for DB2 (LUW) database-types to enhance performance of text-based searches issued from Management Center.',
+  PRIMARY KEY (`CATGROUP_ID`),
+  UNIQUE KEY `IDENTIFIER+MEMBER_ID` (`IDENTIFIER`,`MEMBER_ID`),
+  KEY `MEMBER_ID` (`MEMBER_ID`),
+  KEY `UP_IDENTIFIER` (`UP_IDENTIFIER`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table hold the information related to a catalog group. ';
+
+CREATE TABLE `mbrgrp` (
+  `MBRGRP_ID` bigint(20) NOT NULL,
+  `OWNER_ID` bigint(20) NOT NULL,
+  `FIELD1` varchar(254) DEFAULT NULL,
+  `DESCRIPTION` varchar(512) DEFAULT NULL,
+  `FIELD2` varchar(254) DEFAULT NULL,
+  `MBRGRPNAME` varchar(254) NOT NULL,
+  `FIELD3` varchar(254) DEFAULT NULL,
+  `OID` varchar(64) DEFAULT NULL,
+  `LASTUPDATE` timestamp NULL DEFAULT NULL,
+  `LASTUPDATEDBY` varchar(254) DEFAULT NULL,
+  `OPTCOUNTER` smallint(6) DEFAULT NULL,
+  `UP_MBRGRPNAME` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`MBRGRP_ID`),
+  UNIQUE KEY `OWNER_ID+MBRGRPNAME` (`OWNER_ID`,`MBRGRP_ID`,`UP_MBRGRPNAME`),
+  KEY `UP_MBRGRPNAME` (`UP_MBRGRPNAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table stores member groups defined in the WebSphere Com';
+
+
+CREATE TABLE `storecent` (
+  `STOREENT_ID` int(11) NOT NULL,
+  `CATENTRY_ID` bigint(20) NOT NULL,
+  `OPTCOUNTER` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`STOREENT_ID`,`CATENTRY_ID`),
+  KEY `CATENTRY_ID` (`CATENTRY_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table holds the relationship between StoreEntities and ';
+
+
+CREATE TABLE `baseitem` (
+  `BASEITEM_ID` bigint(20) NOT NULL,
+  `MEMBER_ID` bigint(20) NOT NULL,
+  `ITEMTYPE_ID` char(4) NOT NULL,
+  `QUANTITYMEASURE` char(16) NOT NULL DEFAULT 'C62',
+  `LASTUPDATE` timestamp NULL DEFAULT NULL,
+  `MARKFORDELETE` int(11) NOT NULL,
+  `PARTNUMBER` varchar(72) NOT NULL,
+  `QUANTITYMULTIPLE` double NOT NULL DEFAULT '1',
+  `OPTCOUNTER` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`BASEITEM_ID`),
+  UNIQUE KEY `MEMBER_ID+PARTNUMBER` (`MEMBER_ID`,`PARTNUMBER`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='BaseItems represent a general family of goods with a common ';
+
+
+CREATE TABLE `itemspc` (
+  `ITEMSPC_ID` bigint(20) NOT NULL,
+  `LASTUPDATE` timestamp NULL DEFAULT NULL,
+  `MEMBER_ID` bigint(20) NOT NULL,
+  `MARKFORDELETE` int(11) NOT NULL,
+  `BASEITEM_ID` bigint(20) NOT NULL,
+  `DISCONTINUED` char(1) NOT NULL DEFAULT 'N',
+  `PARTNUMBER` varchar(64) NOT NULL,
+  `OPTCOUNTER` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`ITEMSPC_ID`),
+  UNIQUE KEY `PARTNUMBER+MEMBER_ID` (`PARTNUMBER`,`MEMBER_ID`),
+  KEY `BASEITEM_ID+ITEMSPC_ID` (`BASEITEM_ID`,`ITEMSPC_ID`),
+  KEY `ITEMSPC_ID+BASEITEM_ID+PARTNUMBER` (`ITEMSPC_ID`,`BASEITEM_ID`,`PARTNUMBER`),
+  KEY `MEMBER_ID` (`MEMBER_ID`),
+  KEY `DISCONTINUED` (`DISCONTINUED`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Information about specified items. A specified item is a pro';
